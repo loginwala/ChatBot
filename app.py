@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+import os
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ YOUR_APP_PASSWORD = "amrd vsdj ndqz btrn"  # 16-digit Gmail App password
 GOOGLE_SHEET_ID = "1mBGedEg-k2ziMOrZtbyP7v80CQb-ffvEPjxN_Unmp6E"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
+# Load Google credentials
 CREDS = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
 sheet_service = build("sheets", "v4", credentials=CREDS).spreadsheets()
 
@@ -107,5 +109,8 @@ def get_response():
     return jsonify({"response": reply})
 
 # -----------------------------
+# RENDER DEPLOYMENT FIX
+# -----------------------------
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
