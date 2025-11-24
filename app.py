@@ -1,53 +1,47 @@
 from flask import Flask, request, jsonify, render_template
-from google.oauth2.service_account import Credentials
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import os
-
-# Optional: For local email sending
-import smtplib
-from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
 # -----------------------------
 # CONFIG
 # -----------------------------
-YOUR_EMAIL = "fraz24931@gmail.com"
-YOUR_APP_PASSWORD = "amrd vsdj ndqz btrn"  # 16-digit Gmail App password
-
 GOOGLE_SHEET_ID = "1mBGedEg-k2ziMOrZtbyP7v80CQb-ffvEPjxN_Unmp6E"
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
+          "https://www.googleapis.com/auth/gmail.send"]
 
 # Load Google credentials
-CREDS = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
+CREDS = service_account.Credentials.from_service_account_file(
+    "credentials.json", scopes=SCOPES)
+
+# Google Sheets service
 sheet_service = build("sheets", "v4", credentials=CREDS).spreadsheets()
 
-# -----------------------------
-# USER SESSION
-# -----------------------------
+# Gmail service
+gmail_service = build("gmail", "v1", credentials=CREDS)
+
+# User session
 user_state = {"step": None, "data": {}}
 
 # -----------------------------
-# SEND EMAIL FUNCTION (optional)
+# Send Gmail Function
 # -----------------------------
-def send_email(message_text):
-    """Send email only if SEND_EMAIL env variable is true."""
-    if os.environ.get("SEND_EMAIL", "false").lower() != "true":
-        print("Email sending skipped (Render free instance).")
-        return
+def send_gmail(subject, body):
+    from email.mime.text import MIMEText
+    import base64
 
-    msg = MIMEText(message_text)
-    msg["Subject"] = "🚨 New Emergency Service Request"
-    msg["From"] = YOUR_EMAIL
-    msg["To"] = YOUR_EMAIL
+    message = MIMEText(body)
+    message["to"] = "fraz24931@gmail.com"  # Your Gmail
+    message["from"] = "fraz24931@gmail.com"
+    message["subject"] = subject
 
-    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    server.login(YOUR_EMAIL, YOUR_APP_PASSWORD)
-    server.sendmail(YOUR_EMAIL, YOUR_EMAIL, msg.as_string())
-    server.quit()
+    raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+    gmail_service.users().messages().send(userId="me", body={"raw": raw}).execute()
 
 # -----------------------------
-# SAVE TO GOOGLE SHEET FUNCTION
+# Save to Google Sheet
 # -----------------------------
 def save_to_sheet(values):
     sheet_service.values().append(
@@ -58,7 +52,7 @@ def save_to_sheet(values):
     ).execute()
 
 # -----------------------------
-# MAIN CHATBOT LOGIC
+# Chatbot logic
 # -----------------------------
 def process_message(message):
     global user_state
@@ -88,7 +82,10 @@ def process_message(message):
 
     if user_state["step"] == "emergency_details":
         user_state["data"]["info"] = message
-        send_email(message)  # safe: only sends if SEND_EMAIL=true
+        try:
+            send_gmail("🚨 New Emergency Service Request", message)
+        except Exception as e:
+            print("Email error:", e)
         user_state["step"] = None
         return "🚑 Emergency registered! Our team is on the way. Stay safe."
 
@@ -101,7 +98,7 @@ def process_message(message):
     return "⚠️ Please follow instructions."
 
 # -----------------------------
-# ROUTES
+# Routes
 # -----------------------------
 @app.route("/")
 def home():
@@ -115,7 +112,7 @@ def get_response():
     return jsonify({"response": reply})
 
 # -----------------------------
-# RENDER DEPLOYMENT FIX
+# Render deployment fix
 # -----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
