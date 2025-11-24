@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, render_template
-import smtplib
-from email.mime.text import MIMEText
-
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 import os
+
+# Optional: For local email sending
+import smtplib
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
@@ -27,9 +28,14 @@ sheet_service = build("sheets", "v4", credentials=CREDS).spreadsheets()
 user_state = {"step": None, "data": {}}
 
 # -----------------------------
-# SEND EMAIL FUNCTION
+# SEND EMAIL FUNCTION (optional)
 # -----------------------------
 def send_email(message_text):
+    """Send email only if SEND_EMAIL env variable is true."""
+    if os.environ.get("SEND_EMAIL", "false").lower() != "true":
+        print("Email sending skipped (Render free instance).")
+        return
+
     msg = MIMEText(message_text)
     msg["Subject"] = "🚨 New Emergency Service Request"
     msg["From"] = YOUR_EMAIL
@@ -82,7 +88,7 @@ def process_message(message):
 
     if user_state["step"] == "emergency_details":
         user_state["data"]["info"] = message
-        send_email(message)
+        send_email(message)  # safe: only sends if SEND_EMAIL=true
         user_state["step"] = None
         return "🚑 Emergency registered! Our team is on the way. Stay safe."
 
