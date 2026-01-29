@@ -2,211 +2,509 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Service Bot</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Service Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: sans-serif;
+        * {
             margin: 0;
-            background: #f4f4f9;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* CHAT CONTAINER */
-        #chat-container {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 350px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            max-height: 80vh;
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            transition: all 0.3s ease-in-out;
-        }
-
-        /* TOGGLE BUTTON */
-        #chat-toggle-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            font-size: 26px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: 0.2s;
-        }
-
-        #chat-toggle-button:hover {
-            background-color: #0056d6;
-        }
-
-        /* CHAT HEADER */
-        #chat-header {
-            background-color: #007bff;
-            color: white;
-            padding: 12px;
-            font-weight: bold;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        /* MESSAGE AREA */
-        #chat-box {
-            padding: 15px;
-            flex-grow: 1;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #f8fafc;
         }
 
         .message {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            line-height: 1.4;
-            font-size: 14px;
-            animation: fadeIn 0.25s ease-in-out;
+            margin-bottom: 20px;
+            display: flex;
+            animation: slideIn 0.3s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .user-message {
-            align-self: flex-end;
-            background-color: #d6f5ff;
-            border-bottom-right-radius: 3px;
-        }
-
         .bot-message {
-            align-self: flex-start;
-            background-color: #f1f0f0;
-            border-bottom-left-radius: 3px;
+            justify-content: flex-start;
         }
 
-        /* INPUT AREA */
-        #chat-input {
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .bot-bubble {
+            background: white;
+            border: 2px solid #e0e7ff;
+            color: #374151;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-bubble {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-icon, .user-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
-            padding: 10px;
-            border-top: 1px solid #ddd;
-            background: #fafafa;
+            align-items: center;
+            justify-content: center;
+            margin: 0 12px;
+            flex-shrink: 0;
+        }
+
+        .bot-icon {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+
+        .user-icon {
+            background: #f1f5f9;
+            color: #4f46e5;
+            border: 2px solid #e0e7ff;
+        }
+
+        .typing-indicator {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-radius: 20px;
+            width: 80px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .typing-dot {
+            height: 8px;
+            width: 8px;
+            background: #7c3aed;
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+        }
+
+        .quick-reply {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-btn {
+            background: #f1f5f9;
+            border: 2px solid #e0e7ff;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #4f46e5;
+        }
+
+        .quick-btn:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+
+        .emergency-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #e0e7ff;
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
 
         #user-input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e0e7ff;
+            border-radius: 25px;
+            font-size: 1rem;
             outline: none;
+            transition: all 0.3s;
+            background: #f8fafc;
         }
 
-        #send-button {
-            margin-left: 6px;
-            background-color: #28a745;
+        #user-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        #send-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
-            padding: 10px 14px;
-            border-radius: 5px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        #send-button:hover {
-            background-color: #218838;
+        #send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #64748b;
+            padding: 10px 25px;
+            background: #f8fafc;
+            border-top: 2px solid #e0e7ff;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            .header h1 { font-size: 1.8rem; }
+            .message-bubble { max-width: 85%; }
         }
     </style>
 </head>
 <body>
-
-<button id="chat-toggle-button">💬</button>
-
-<div id="chat-container">
-    <div id="chat-header">Your Website Service Bot</div>
-
-    <div id="chat-box">
-        <div class="message bot-message">
-            Hello! Welcome to our website service. How can I assist you today?
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-comment-medical"></i> Medical Service Assistant</h1>
+            <p>24/7 Emergency & Appointment Services</p>
+        </div>
+        
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Live - Connected to Medical Services</span>
+        </div>
+        
+        <div class="chat-container" id="chat-container">
+            <!-- Messages will be inserted here -->
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            <button id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-    <div id="chat-input">
-        <input type="text" id="user-input" placeholder="Type a message...">
-        <button id="send-button" onclick="sendMessage()">Send</button>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> Message sent successfully!
     </div>
-</div>
 
-<script>
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const notification = document.getElementById('notification');
+        let quickReplies = null;
 
-    const chatContainer = document.getElementById("chat-container");
-    const toggleBtn = document.getElementById("chat-toggle-button");
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
+        // Initial bot message
+        setTimeout(() => {
+            addBotMessage("👋 Welcome! Do you need any medical service today?");
+            showQuickReplies(['Yes', 'No']);
+        }, 500);
 
-    // Open & close chat
-    toggleBtn.onclick = () => {
-        if (chatContainer.style.display === "flex") {
-            chatContainer.style.display = "none";
-        } else {
-            chatContainer.style.display = "flex";
-            userInput.focus();
+        function addMessage(sender, message, isQuickReply = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = `${sender}-icon`;
+            iconDiv.innerHTML = sender === 'bot' ? 
+                '<i class="fas fa-robot"></i>' : 
+                '<i class="fas fa-user"></i>';
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = `${sender}-bubble message-bubble`;
+            bubbleDiv.innerHTML = message;
+            
+            if (sender === 'bot') {
+                messageDiv.appendChild(iconDiv);
+                messageDiv.appendChild(bubbleDiv);
+            } else {
+                messageDiv.appendChild(bubbleDiv);
+                messageDiv.appendChild(iconDiv);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Add typing indicator for bot responses
+            if (sender === 'user' && !isQuickReply) {
+                showTypingIndicator();
+            }
         }
-    };
 
-    // Add message bubble
-    function addMessage(text, sender) {
-        const div = document.createElement("div");
-        div.classList.add("message", `${sender}-message`);
-        div.textContent = text;
-        chatBox.appendChild(div);
+        function addBotMessage(message) {
+            addMessage('bot', message);
+        }
 
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+        function addUserMessage(message) {
+            addMessage('user', message);
+        }
 
-    // Send message
-    async function sendMessage() {
-        const message = userInput.value.trim();
-        if (!message) return;
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message';
+            typingDiv.innerHTML = `
+                <div class="bot-icon"><i class="fas fa-robot"></i></div>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
-        addMessage(message, "user");
-        userInput.value = "";
-
-        try {
-            const response = await fetch("/get_response", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message })
+        function showQuickReplies(replies) {
+            // Remove previous quick replies
+            if (quickReplies) {
+                quickReplies.remove();
+            }
+            
+            const quickDiv = document.createElement('div');
+            quickDiv.className = 'quick-reply';
+            
+            replies.forEach(reply => {
+                const btn = document.createElement('button');
+                btn.className = reply.toLowerCase().includes('emergency') ? 
+                    'quick-btn emergency-btn' : 'quick-btn';
+                btn.textContent = reply;
+                btn.onclick = () => sendQuickReply(reply);
+                quickDiv.appendChild(btn);
             });
+            
+            chatContainer.appendChild(quickDiv);
+            quickReplies = quickDiv;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
-            const data = await response.json();
+        function sendQuickReply(reply) {
+            addUserMessage(reply);
+            quickReplies.remove();
+            quickReplies = null;
+            sendMessage(reply);
+        }
 
+        async function sendMessage(message = null) {
+            const msg = message || userInput.value.trim();
+            
+            if (!msg) return;
+            
+            addUserMessage(msg);
+            userInput.value = '';
+            
+            try {
+                const response = await fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: msg })
+                });
+                
+                const data = await response.json();
+                
+                // Remove typing indicator
+                const typingIndicator = document.querySelector('.typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.parentElement.parentElement.remove();
+                }
+                
+                setTimeout(() => {
+                    addBotMessage(data.response);
+                    
+                    // Show appropriate quick replies based on context
+                    if (data.response.includes('emergency OR normal')) {
+                        showQuickReplies(['Emergency', 'Normal']);
+                    } else if (data.response.includes('yes / no')) {
+                        showQuickReplies(['Yes', 'No']);
+                    } else if (data.response.includes('Emergency detected')) {
+                        showNotification('🚨 Emergency alert sent to medical team!');
+                    } else if (data.response.includes('appointment is booked')) {
+                        showNotification('📅 Appointment confirmed! Check your email.');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                addBotMessage("⚠️ Sorry, there was an error. Please try again.");
+            }
+        }
+
+        function showNotification(message) {
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            notification.style.display = 'block';
             setTimeout(() => {
-                addMessage(data.response, "bot");
-            }, 350);
-
-        } catch (e) {
-            addMessage("Server error. Please try again.", "bot");
+                notification.style.display = 'none';
+            }, 3000);
         }
-    }
 
-    // Press Enter to send
-    userInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            sendMessage();
-        }
-    });
+        // Event Listeners
+        sendBtn.addEventListener('click', () => sendMessage());
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
 
-</script>
+        // Auto-focus input
+        userInput.focus();
 
+        // Add some visual feedback on focus
+        userInput.addEventListener('focus', () => {
+            userInput.style.transform = 'scale(1.02)';
+        });
+
+        userInput.addEventListener('blur', () => {
+            userInput.style.transform = 'scale(1)';
+        });
+    </script>
 </body>
 </html>
