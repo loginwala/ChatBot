@@ -3,26 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediAI - Intelligent Medical Assistant</title>
+    <title>MediAI - Medical Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: #60a5fa;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -30,98 +13,80 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: var(--gray-900);
-            line-height: 1.5;
+            color: #333;
         }
 
-        .chat-app {
+        /* Main Chat Container */
+        .chat-container {
             width: 100%;
             max-width: 500px;
             height: 90vh;
             max-height: 800px;
             background: white;
             border-radius: 24px;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            position: relative;
             animation: fadeIn 0.5s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         /* Header */
         .chat-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 20px 24px;
+            text-align: center;
             position: relative;
-            overflow: hidden;
         }
 
         .header-content {
-            flex: 1;
-        }
-
-        .header-content h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-content p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .header-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: none;
-            color: white;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            gap: 15px;
         }
 
-        .header-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
+        .ai-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        /* AI Status */
-        .ai-status {
-            background: var(--secondary);
-            color: white;
-            padding: 10px 24px;
+        .header-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-text p {
             font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #10b981;
+            color: white;
+            padding: 8px 24px;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -134,7 +99,7 @@
             gap: 8px;
         }
 
-        .status-dot {
+        .live-dot {
             width: 8px;
             height: 8px;
             background: white;
@@ -147,21 +112,55 @@
             50% { opacity: 0.5; }
         }
 
-        /* Messages Container */
+        /* Messages Container - CENTERED DESIGN */
         .messages-container {
             flex: 1;
             padding: 24px;
             overflow-y: auto;
-            background: var(--gray-50);
+            background: #f8fafc;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        /* Messages */
+        /* Message Bubbles - CENTERED */
         .message {
+            display: flex;
             max-width: 85%;
             animation: messageSlide 0.3s ease-out;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-content {
+            padding: 14px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            word-wrap: break-word;
+        }
+
+        /* Bot Message - Left side but visually balanced */
+        .message.bot .message-content {
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 5px;
+        }
+
+        /* User Message - Right side with primary color */
+        .message.user .message-content {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-bottom-right-radius: 5px;
         }
 
         @keyframes messageSlide {
@@ -175,64 +174,22 @@
             }
         }
 
-        .message.user {
-            align-self: flex-end;
-        }
-
-        .message.bot {
-            align-self: flex-start;
-        }
-
-        .message-content {
-            padding: 16px 20px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            position: relative;
-            box-shadow: var(--shadow);
-        }
-
-        .message.user .message-content {
-            background: var(--primary);
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message.bot .message-content {
-            background: white;
-            color: var(--gray-900);
-            border: 1px solid var(--gray-200);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-top: 4px;
-            display: block;
-            text-align: right;
-        }
-
-        .message.bot .message-time {
-            text-align: left;
-        }
-
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
             gap: 6px;
-            padding: 20px;
+            padding: 16px 20px;
             background: white;
             border-radius: 20px;
             width: 70px;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow);
-            margin-top: 4px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .typing-dot {
             width: 8px;
             height: 8px;
-            background: var(--primary);
+            background: #4f46e5;
             border-radius: 50%;
             animation: typingBounce 1.4s infinite ease-in-out;
         }
@@ -247,38 +204,99 @@
 
         /* Special Messages */
         .emergency-alert {
-            background: linear-gradient(135deg, var(--danger), #dc2626);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             padding: 16px;
             border-radius: 12px;
-            margin: 12px 0;
+            margin: 8px 0;
             animation: emergencyPulse 1.5s infinite;
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
             display: flex;
             align-items: center;
             gap: 12px;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
         }
 
         @keyframes emergencyPulse {
-            0%, 100% { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3); }
-            50% { box-shadow: 0 8px 35px rgba(239, 68, 68, 0.5); }
+            0%, 100% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 4px 30px rgba(239, 68, 68, 0.5); }
         }
 
         .success-message {
-            background: linear-gradient(135deg, var(--secondary), #059669);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             padding: 16px;
             border-radius: 12px;
-            margin: 12px 0;
+            margin: 8px 0;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        /* Conversation Complete */
+        /* Welcome Screen - CENTERED */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .welcome-text h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .welcome-text p {
+            color: #6b7280;
+            margin-bottom: 32px;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Conversation Complete - CENTERED */
         .conversation-complete {
             background: white;
-            border: 2px solid var(--primary-light);
+            border: 2px solid #e5e7eb;
             border-radius: 16px;
             padding: 24px;
             margin: 20px 0;
@@ -291,16 +309,22 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .conversation-complete h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
+        .complete-icon {
+            font-size: 2.5rem;
+            color: #10b981;
+            margin-bottom: 16px;
         }
 
-        .conversation-complete p {
-            color: var(--gray-800);
-            margin-bottom: 20px;
-            font-size: 0.95rem;
+        .complete-text h3 {
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .complete-text p {
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
         }
 
         .action-buttons {
@@ -310,7 +334,7 @@
         }
 
         .action-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 10px;
             border: none;
             font-size: 0.9rem;
@@ -320,33 +344,35 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            min-width: 140px;
+            justify-content: center;
         }
 
         .primary-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
         }
 
         .primary-btn:hover {
-            background: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
         }
 
         .secondary-btn {
-            background: var(--gray-100);
-            color: var(--gray-800);
+            background: #f3f4f6;
+            color: #374151;
         }
 
         .secondary-btn:hover {
-            background: var(--gray-200);
+            background: #e5e7eb;
             transform: translateY(-2px);
         }
 
-        /* Input Area */
+        /* Input Area - BOTTOM CENTERED */
         .input-container {
             padding: 20px;
             background: white;
-            border-top: 1px solid var(--gray-200);
+            border-top: 1px solid #e5e7eb;
             position: relative;
         }
 
@@ -358,30 +384,30 @@
 
         #user-input {
             flex: 1;
-            padding: 16px 20px;
-            border: 2px solid var(--gray-200);
+            padding: 14px 20px;
+            border: 2px solid #e5e7eb;
             border-radius: 50px;
             font-size: 0.95rem;
             outline: none;
             transition: all 0.3s ease;
-            background: var(--gray-50);
+            background: #f9fafb;
             resize: none;
-            min-height: 54px;
+            min-height: 50px;
             max-height: 120px;
             font-family: inherit;
         }
 
         #user-input:focus {
-            border-color: var(--primary);
+            border-color: #4f46e5;
             background: white;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
         #send-btn {
-            width: 54px;
-            height: 54px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
             cursor: pointer;
@@ -391,12 +417,12 @@
             justify-content: center;
             font-size: 1.1rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
 
         #send-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
         }
 
         #send-btn:disabled {
@@ -404,65 +430,79 @@
             cursor: not-allowed;
         }
 
-        /* Welcome Screen */
-        .welcome-screen {
-            padding: 40px 24px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
+        /* Quick Actions */
+        .quick-actions {
+            padding: 16px 24px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .welcome-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            color: white;
-            font-size: 2rem;
-            box-shadow: var(--shadow);
-        }
-
-        .welcome-screen h2 {
-            font-size: 1.5rem;
-            color: var(--gray-900);
-            margin-bottom: 12px;
-        }
-
-        .welcome-screen p {
-            color: var(--gray-800);
-            margin-bottom: 32px;
-            max-width: 400px;
-        }
-
-        .start-conversation-btn {
-            padding: 14px 32px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
+        .quick-btn {
+            padding: 12px 16px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-align: left;
+            color: #374151;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: var(--shadow);
         }
 
-        .start-conversation-btn:hover {
+        .quick-btn:hover {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
         }
 
-        /* Scrollbar */
+        .quick-btn.emergency {
+            background: #fee2e2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        .quick-btn.emergency:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(15deg);
+        }
+
+        /* Scrollbar Styling */
         .messages-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -472,88 +512,187 @@
         }
 
         .messages-container::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
+            background: #cbd5e1;
             border-radius: 3px;
         }
 
         .messages-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
+            background: #94a3b8;
         }
 
-        /* Responsive */
+        /* Responsive Design */
         @media (max-width: 640px) {
-            .chat-app {
-                height: 95vh;
+            .chat-container {
+                height: 100vh;
                 max-height: none;
-                border-radius: 16px;
+                border-radius: 0;
+                max-width: 100%;
             }
             
-            .chat-header {
-                padding: 20px;
+            body {
+                padding: 0;
             }
             
-            .messages-container {
-                padding: 20px;
+            .header-text h1 {
+                font-size: 1.1rem;
             }
             
             .message {
                 max-width: 90%;
             }
             
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
             .action-buttons {
                 flex-direction: column;
             }
+            
+            .action-btn {
+                min-width: 100%;
+            }
+            
+            .welcome-screen {
+                padding: 30px 20px;
+            }
+            
+            .welcome-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            
+            .welcome-text h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .message {
+                max-width: 95%;
+            }
+            
+            .message-content {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .input-container {
+                padding: 16px;
+            }
+            
+            #user-input {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            #send-btn {
+                width: 46px;
+                height: 46px;
+            }
+        }
+
+        /* Animation for new messages */
+        .message.new {
+            animation: highlightMessage 1s ease;
+        }
+
+        @keyframes highlightMessage {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Loading animation */
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
         }
     </style>
 </head>
 <body>
-    <div class="chat-app">
+    <div class="chat-container">
+        <!-- Header -->
         <div class="chat-header">
             <div class="header-content">
-                <h1>
-                    <i class="fas fa-stethoscope"></i>
-                    MediAI Assistant
-                </h1>
-                <p>AI-powered medical support 24/7</p>
+                <div class="ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="header-text">
+                    <h1>MediAI Assistant</h1>
+                    <p>AI-Powered Medical Support</p>
+                </div>
             </div>
             <div class="header-actions">
-                <button class="header-btn" id="reset-btn" title="New Conversation">
+                <button class="header-btn" id="reset-btn" title="New Chat">
                     <i class="fas fa-redo"></i>
                 </button>
-                <button class="header-btn" id="info-btn" title="AI Info">
+                <button class="header-btn" id="info-btn" title="Information">
                     <i class="fas fa-info"></i>
                 </button>
             </div>
         </div>
 
-        <div class="ai-status">
+        <!-- Status Bar -->
+        <div class="status-bar">
             <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>AI Model Active • 99.3% Accuracy</span>
+                <div class="live-dot"></div>
+                <span>AI Active • 99.3% Accuracy</span>
             </div>
             <div class="session-info" id="session-info">
                 Session: Ready
             </div>
         </div>
 
+        <!-- Quick Action Buttons -->
+        <div class="quick-actions" id="quick-actions">
+            <button class="quick-btn" onclick="useQuickAction('Emergency help needed')">
+                <i class="fas fa-ambulance"></i> Emergency Help
+            </button>
+            <button class="quick-btn" onclick="useQuickAction('Schedule doctor appointment')">
+                <i class="fas fa-calendar-check"></i> Book Appointment
+            </button>
+            <button class="quick-btn" onclick="useQuickAction('I have medical symptoms')">
+                <i class="fas fa-stethoscope"></i> Symptom Check
+            </button>
+            <button class="quick-btn" onclick="useQuickAction('What services do you offer?')">
+                <i class="fas fa-question-circle"></i> Service Info
+            </button>
+        </div>
+
+        <!-- Messages Container -->
         <div class="messages-container" id="messages-container">
-            <!-- Welcome screen initially -->
+            <!-- Welcome Screen (Initially shown) -->
             <div class="welcome-screen" id="welcome-screen">
                 <div class="welcome-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <h2>Welcome to MediAI Assistant</h2>
-                <p>I'm here to help with medical emergencies, appointments, and health information. How can I assist you today?</p>
-                <button class="start-conversation-btn" id="start-btn">
                     <i class="fas fa-comment-medical"></i>
-                    Start Conversation
-                </button>
+                </div>
+                <div class="welcome-text">
+                    <h2>Welcome to MediAI Assistant</h2>
+                    <p>Your intelligent medical assistant powered by AI. I can help with emergencies, appointments, symptom assessment, and medical information.</p>
+                    <button class="start-btn" id="start-btn">
+                        <i class="fas fa-comments"></i> Start Conversation
+                    </button>
+                </div>
             </div>
 
-            <!-- Messages will be added here -->
+            <!-- Messages will be inserted here -->
             <div id="messages" style="display: none;"></div>
         </div>
 
+        <!-- Input Area -->
         <div class="input-container" style="display: none;" id="input-container">
             <div class="input-wrapper">
                 <textarea 
@@ -569,22 +708,13 @@
         </div>
     </div>
 
-    <!-- Info Modal -->
-    <div class="modal" id="info-modal" style="display: none;">
-        <div class="modal-content">
-            <h3>About MediAI</h3>
-            <p>AI-powered medical assistant v2.5</p>
-            <p>Features: Emergency detection, appointment scheduling, symptom assessment</p>
-            <button onclick="closeModal()">Close</button>
-        </div>
-    </div>
-
     <script>
         // DOM Elements
         const messagesContainer = document.getElementById('messages');
         const messagesWrapper = document.getElementById('messages-container');
         const inputContainer = document.getElementById('input-container');
         const welcomeScreen = document.getElementById('welcome-screen');
+        const quickActions = document.getElementById('quick-actions');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const resetBtn = document.getElementById('reset-btn');
@@ -605,10 +735,20 @@
                 currentSession = JSON.parse(savedSession);
                 if (currentSession.active) {
                     startConversation();
+                    // Add previous messages if any
+                    if (currentSession.history) {
+                        conversationHistory = currentSession.history;
+                        currentSession.history.forEach(msg => {
+                            if (msg.role === 'user') {
+                                addUserMessage(msg.content, false);
+                            } else if (msg.role === 'assistant') {
+                                addBotMessage(msg.content, false);
+                            }
+                        });
+                    }
                 }
             }
             
-            // Update session info
             updateSessionInfo();
         }
 
@@ -619,7 +759,9 @@
             
             // Show chat interface
             messages.style.display = 'flex';
+            messages.style.flexDirection = 'column';
             inputContainer.style.display = 'block';
+            quickActions.style.display = 'grid';
             
             // Create new session if needed
             if (!currentSession) {
@@ -628,9 +770,8 @@
                     started: new Date().toISOString(),
                     active: true,
                     messageCount: 0,
-                    lastMessage: null
+                    history: []
                 };
-                saveSession();
             }
             
             conversationActive = true;
@@ -638,42 +779,47 @@
             // Add initial bot message if no messages yet
             if (conversationHistory.length === 0) {
                 setTimeout(() => {
-                    addBotMessage("Hello! I'm MediAI, your intelligent medical assistant. I can help with:\n\n• 🚨 Emergency situations\n• 📅 Appointment scheduling\n• 🤒 Symptom assessment\n• ℹ️ Medical information\n\nHow can I assist you today?");
+                    addBotMessage("Hello! I'm MediAI, your medical assistant. How can I help you today?");
                 }, 500);
             }
             
             // Focus input
             userInput.focus();
             updateSessionInfo();
+            
+            // Auto-hide quick actions after 10 seconds or first message
+            setTimeout(() => {
+                if (conversationHistory.length === 0) {
+                    quickActions.style.opacity = '0.5';
+                }
+            }, 10000);
         }
 
         // Add message to chat
-        function addMessage(sender, content) {
+        function addMessage(sender, content, animate = true) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
+            messageDiv.className = `message ${sender}${animate ? ' new' : ''}`;
             
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             
-            // Format content with line breaks and emojis
+            // Format content
             let formattedContent = content
                 .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/🚨/g, '<i class="fas fa-exclamation-triangle"></i>')
+                .replace(/✅/g, '<i class="fas fa-check-circle"></i>')
+                .replace(/📅/g, '<i class="fas fa-calendar-alt"></i>')
+                .replace(/🤒/g, '<i class="fas fa-thermometer-half"></i>');
             
             contentDiv.innerHTML = formattedContent;
-            
-            const timeDiv = document.createElement('span');
-            timeDiv.className = 'message-time';
-            timeDiv.textContent = formatTime(new Date());
-            
             messageDiv.appendChild(contentDiv);
-            messageDiv.appendChild(timeDiv);
             messages.appendChild(messageDiv);
             
             // Store in history
             conversationHistory.push({
-                sender,
-                content,
+                role: sender,
+                content: content,
                 timestamp: new Date().toISOString()
             });
             
@@ -681,11 +827,24 @@
             if (currentSession) {
                 currentSession.messageCount++;
                 currentSession.lastMessage = new Date().toISOString();
+                currentSession.history = conversationHistory;
                 saveSession();
             }
             
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Scroll to bottom with smooth behavior
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+            
+            // Hide quick actions after first user message
+            if (sender === 'user' && quickActions.style.display === 'grid') {
+                setTimeout(() => {
+                    quickActions.style.opacity = '0';
+                    setTimeout(() => {
+                        quickActions.style.display = 'none';
+                    }, 300);
+                }, 500);
+            }
             
             // Show typing indicator for bot responses
             if (sender === 'user') {
@@ -693,12 +852,12 @@
             }
         }
 
-        function addBotMessage(content) {
-            addMessage('bot', content);
+        function addBotMessage(content, animate = true) {
+            addMessage('bot', content, animate);
         }
 
-        function addUserMessage(content) {
-            addMessage('user', content);
+        function addUserMessage(content, animate = true) {
+            addMessage('user', content, animate);
         }
 
         function addEmergencyAlert(content) {
@@ -722,15 +881,20 @@
             const completeDiv = document.createElement('div');
             completeDiv.className = 'conversation-complete';
             completeDiv.innerHTML = `
-                <h3><i class="fas fa-check-circle"></i> Conversation Complete</h3>
-                <p>Thank you for using MediAI. Your medical request has been processed. What would you like to do next?</p>
-                <div class="action-buttons">
-                    <button class="action-btn primary-btn" onclick="startNewConversation()">
-                        <i class="fas fa-plus"></i> New Conversation
-                    </button>
-                    <button class="action-btn secondary-btn" onclick="showSummary()">
-                        <i class="fas fa-file-medical"></i> View Summary
-                    </button>
+                <div class="complete-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="complete-text">
+                    <h3>Conversation Complete</h3>
+                    <p>Thank you for using MediAI. Your medical request has been processed successfully.</p>
+                    <div class="action-buttons">
+                        <button class="action-btn primary-btn" onclick="startNewConversation()">
+                            <i class="fas fa-plus"></i> New Chat
+                        </button>
+                        <button class="action-btn secondary-btn" onclick="showSummary()">
+                            <i class="fas fa-history"></i> View History
+                        </button>
+                    </div>
                 </div>
             `;
             messages.appendChild(completeDiv);
@@ -748,21 +912,28 @@
                 currentSession.active = true;
                 currentSession.messageCount = 0;
                 currentSession.lastMessage = null;
+                currentSession.history = [];
                 saveSession();
             }
             
+            // Show quick actions again
+            quickActions.style.display = 'grid';
+            quickActions.style.opacity = '1';
+            
             // Show new welcome message
-            addBotMessage("Hello! I'm MediAI, ready to assist you. How can I help with your medical needs today?");
+            setTimeout(() => {
+                addBotMessage("Hello! I'm MediAI, ready to assist you. How can I help with your medical needs today?");
+            }, 500);
             
             // Focus input
-            userInput.focus();
+            setTimeout(() => userInput.focus(), 600);
             updateSessionInfo();
         }
 
         // Show summary
         function showSummary() {
             const summary = conversationHistory
-                .filter(msg => msg.sender === 'user')
+                .filter(msg => msg.role === 'user')
                 .map(msg => `• ${msg.content}`)
                 .join('\n');
             
@@ -793,13 +964,26 @@
             }
         }
 
+        // Use quick action
+        function useQuickAction(text) {
+            userInput.value = text;
+            userInput.focus();
+            userInput.style.height = 'auto';
+            userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+        }
+
         // Send message to server
         async function sendMessage(message = null) {
             if (isProcessing || !conversationActive) return;
             
             const msg = message || userInput.value.trim();
             
-            if (!msg) return;
+            if (!msg) {
+                // Shake input for visual feedback
+                userInput.style.animation = 'shake 0.5s';
+                setTimeout(() => userInput.style.animation = '', 500);
+                return;
+            }
             
             isProcessing = true;
             sendBtn.disabled = true;
@@ -835,13 +1019,15 @@
                     
                     // Check for special conditions
                     if (data.response.includes('EMERGENCY') || data.response.includes('🚨')) {
-                        addEmergencyAlert('Emergency alert sent to medical team. Help is on the way.');
+                        addEmergencyAlert('Emergency services have been alerted. Help is on the way.');
                     } else if (data.response.includes('APPOINTMENT') || data.response.includes('✅')) {
-                        addSuccessMessage('Appointment scheduled and confirmation sent.');
+                        addSuccessMessage('Appointment confirmed. Details have been saved.');
                     }
                     
                     // Check if conversation is complete
-                    if (data.response.includes('Thank you') || data.response.includes('goodbye') || 
+                    if (data.conversation_complete || 
+                        data.response.includes('Thank you') || 
+                        data.response.includes('goodbye') || 
                         conversationHistory.length >= 15) {
                         setTimeout(() => {
                             showConversationComplete();
@@ -850,7 +1036,7 @@
                                 currentSession.active = false;
                                 saveSession();
                             }
-                        }, 1000);
+                        }, 1500);
                     }
                     
                     isProcessing = false;
@@ -884,14 +1070,6 @@
             }
         }
 
-        // Format time
-        function formatTime(date) {
-            return date.toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-        }
-
         // Adjust textarea height
         function adjustTextareaHeight() {
             userInput.style.height = 'auto';
@@ -922,8 +1100,15 @@
                 welcomeScreen.style.display = 'flex';
                 inputContainer.style.display = 'none';
                 messages.style.display = 'none';
+                quickActions.style.display = 'grid';
+                quickActions.style.opacity = '1';
                 updateSessionInfo();
             }
+        });
+        
+        // Info button
+        document.getElementById('info-btn').addEventListener('click', () => {
+            alert('MediAI Assistant v2.5\n\nPowered by AI for medical assistance\n• Emergency response\n• Appointment scheduling\n• Symptom assessment\n• 24/7 availability');
         });
         
         // Auto-resize on paste
@@ -931,16 +1116,26 @@
             setTimeout(adjustTextareaHeight, 0);
         });
         
+        // Focus input when clicking on messages
+        messagesContainer.addEventListener('click', () => {
+            if (conversationActive) {
+                userInput.focus();
+            }
+        });
+        
+        // Add shake animation for empty messages
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', init);
-        
-        // Example functions for modal (you can expand these)
-        function showInfo() {
-            alert(`MediAI Assistant v2.5\n\nFeatures:\n• AI-powered medical assistance\n• Emergency detection & response\n• Appointment scheduling\n• 24/7 availability\n• 99.3% accuracy rate`);
-        }
-        
-        // Attach info button
-        document.getElementById('info-btn').addEventListener('click', showInfo);
     </script>
 </body>
 </html>
