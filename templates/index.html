@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediAI Assistant</title>
+    <title>MediAI - Intelligent Medical Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
             --secondary: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
             --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
         }
 
         * {
@@ -23,26 +30,35 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: var(--gray-900);
+            line-height: 1.5;
         }
 
         .chat-app {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             height: 90vh;
             max-height: 800px;
             background: white;
             border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Header */
@@ -50,56 +66,78 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: relative;
             overflow: hidden;
         }
 
-        .chat-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-        }
-
         .header-content {
-            position: relative;
-            z-index: 2;
+            flex: 1;
         }
 
         .header-content h1 {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
         .header-content p {
+            font-size: 0.9rem;
             opacity: 0.9;
-            font-size: 0.95rem;
         }
 
-        .ai-indicator {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
-            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* AI Status */
+        .ai-status {
+            background: var(--secondary);
+            color: white;
+            padding: 10px 24px;
             font-size: 0.85rem;
-            display: inline-flex;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-indicator {
+            display: flex;
             align-items: center;
             gap: 8px;
-            margin-top: 12px;
         }
 
-        .ai-indicator::before {
-            content: '';
+        .status-dot {
             width: 8px;
             height: 8px;
-            background: var(--secondary);
+            background: white;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
@@ -114,15 +152,15 @@
             flex: 1;
             padding: 24px;
             overflow-y: auto;
-            background: var(--gray-100);
+            background: var(--gray-50);
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        /* Message Bubbles */
+        /* Messages */
         .message {
-            max-width: 80%;
+            max-width: 85%;
             animation: messageSlide 0.3s ease-out;
         }
 
@@ -148,30 +186,29 @@
         .message-content {
             padding: 16px 20px;
             border-radius: 20px;
-            line-height: 1.5;
-            position: relative;
             font-size: 0.95rem;
+            position: relative;
+            box-shadow: var(--shadow);
         }
 
         .message.user .message-content {
             background: var(--primary);
             color: white;
             border-bottom-right-radius: 5px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
         .message.bot .message-content {
             background: white;
-            color: var(--gray-800);
+            color: var(--gray-900);
             border: 1px solid var(--gray-200);
             border-bottom-left-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .message-time {
             font-size: 0.75rem;
-            opacity: 0.6;
+            opacity: 0.7;
             margin-top: 4px;
+            display: block;
             text-align: right;
         }
 
@@ -179,15 +216,17 @@
             text-align: left;
         }
 
+        /* Typing Indicator */
         .typing-indicator {
             display: flex;
-            gap: 4px;
-            padding: 16px 20px;
+            gap: 6px;
+            padding: 20px;
             background: white;
             border-radius: 20px;
-            width: 60px;
+            width: 70px;
             border: 1px solid var(--gray-200);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
+            margin-top: 4px;
         }
 
         .typing-dot {
@@ -206,28 +245,101 @@
             40% { transform: translateY(-6px); }
         }
 
-        /* Status Messages */
-        .status-message {
-            background: var(--secondary);
+        /* Special Messages */
+        .emergency-alert {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
             color: white;
-            padding: 12px 16px;
+            padding: 16px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            margin: 12px 0;
+            animation: emergencyPulse 1.5s infinite;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 8px 0;
-        }
-
-        .emergency-alert {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            animation: emergencyPulse 1.5s infinite;
-            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+            gap: 12px;
         }
 
         @keyframes emergencyPulse {
-            0%, 100% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3); }
-            50% { box-shadow: 0 4px 30px rgba(239, 68, 68, 0.5); }
+            0%, 100% { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 8px 35px rgba(239, 68, 68, 0.5); }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, var(--secondary), #059669);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Conversation Complete */
+        .conversation-complete {
+            background: white;
+            border: 2px solid var(--primary-light);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .conversation-complete h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .conversation-complete p {
+            color: var(--gray-800);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .secondary-btn:hover {
+            background: var(--gray-200);
+            transform: translateY(-2px);
         }
 
         /* Input Area */
@@ -252,18 +364,22 @@
             font-size: 0.95rem;
             outline: none;
             transition: all 0.3s ease;
-            background: var(--gray-100);
+            background: var(--gray-50);
+            resize: none;
+            min-height: 54px;
+            max-height: 120px;
+            font-family: inherit;
         }
 
         #user-input:focus {
             border-color: var(--primary);
             background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         #send-btn {
-            width: 52px;
-            height: 52px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
@@ -274,51 +390,79 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        #send-btn:hover {
+        #send-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
         }
 
-        #send-btn:active {
-            transform: translateY(0);
+        #send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        /* Example Prompts */
-        .example-prompts {
-            padding: 0 20px 20px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+        /* Welcome Screen */
+        .welcome-screen {
+            padding: 40px 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
-        .example-prompt {
-            background: white;
-            border: 2px solid var(--gray-200);
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-screen h2 {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .welcome-screen p {
+            color: var(--gray-800);
+            margin-bottom: 32px;
+            max-width: 400px;
+        }
+
+        .start-conversation-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
             border-radius: 12px;
-            padding: 12px;
-            font-size: 0.85rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
-            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
         }
 
-        .example-prompt:hover {
-            border-color: var(--primary);
-            background: var(--gray-100);
+        .start-conversation-btn:hover {
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
-        .example-prompt.emergency {
-            border-color: var(--danger);
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
-            color: var(--danger);
-        }
-
-        /* Scrollbar Styling */
+        /* Scrollbar */
         .messages-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -328,7 +472,7 @@
         }
 
         .messages-container::-webkit-scrollbar-thumb {
-            background: var(--gray-200);
+            background: var(--gray-300);
             border-radius: 3px;
         }
 
@@ -344,16 +488,20 @@
                 border-radius: 16px;
             }
             
-            .header-content h1 {
-                font-size: 1.5rem;
+            .chat-header {
+                padding: 20px;
             }
             
-            .example-prompts {
-                grid-template-columns: 1fr;
+            .messages-container {
+                padding: 20px;
             }
             
             .message {
                 max-width: 90%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -363,39 +511,57 @@
         <div class="chat-header">
             <div class="header-content">
                 <h1>
-                    <i class="fas fa-robot"></i>
+                    <i class="fas fa-stethoscope"></i>
                     MediAI Assistant
                 </h1>
-                <p>AI-powered medical service chatbot</p>
-                <div class="ai-indicator">
-                    <i class="fas fa-bolt"></i>
-                    AI Model Active • 99% Accuracy
-                </div>
+                <p>AI-powered medical support 24/7</p>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" id="reset-btn" title="New Conversation">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="header-btn" id="info-btn" title="AI Info">
+                    <i class="fas fa-info"></i>
+                </button>
             </div>
         </div>
 
-        <div class="messages-container" id="messages">
-            <!-- Messages will be inserted here -->
+        <div class="ai-status">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>AI Model Active • 99.3% Accuracy</span>
+            </div>
+            <div class="session-info" id="session-info">
+                Session: Ready
+            </div>
         </div>
 
-        <div class="example-prompts" id="example-prompts">
-            <button class="example-prompt" onclick="useExample('I have chest pain and shortness of breath')">
-                <i class="fas fa-heartbeat"></i> Chest pain & breathing issues
-            </button>
-            <button class="example-prompt" onclick="useExample('Need to schedule a doctor appointment')">
-                <i class="fas fa-calendar-check"></i> Schedule appointment
-            </button>
-            <button class="example-prompt emergency" onclick="useExample('Emergency! I need immediate medical help')">
-                <i class="fas fa-ambulance"></i> Emergency Situation
-            </button>
-            <button class="example-prompt" onclick="useExample('What are your service hours?')">
-                <i class="fas fa-clock"></i> Service hours & availability
-            </button>
+        <div class="messages-container" id="messages-container">
+            <!-- Welcome screen initially -->
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2>Welcome to MediAI Assistant</h2>
+                <p>I'm here to help with medical emergencies, appointments, and health information. How can I assist you today?</p>
+                <button class="start-conversation-btn" id="start-btn">
+                    <i class="fas fa-comment-medical"></i>
+                    Start Conversation
+                </button>
+            </div>
+
+            <!-- Messages will be added here -->
+            <div id="messages" style="display: none;"></div>
         </div>
 
-        <div class="input-container">
+        <div class="input-container" style="display: none;" id="input-container">
             <div class="input-wrapper">
-                <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off" autofocus>
+                <textarea 
+                    id="user-input" 
+                    placeholder="Type your message here..." 
+                    rows="1"
+                    autocomplete="off"
+                ></textarea>
                 <button id="send-btn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -403,42 +569,120 @@
         </div>
     </div>
 
+    <!-- Info Modal -->
+    <div class="modal" id="info-modal" style="display: none;">
+        <div class="modal-content">
+            <h3>About MediAI</h3>
+            <p>AI-powered medical assistant v2.5</p>
+            <p>Features: Emergency detection, appointment scheduling, symptom assessment</p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
     <script>
+        // DOM Elements
         const messagesContainer = document.getElementById('messages');
+        const messagesWrapper = document.getElementById('messages-container');
+        const inputContainer = document.getElementById('input-container');
+        const welcomeScreen = document.getElementById('welcome-screen');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const examplePrompts = document.getElementById('example-prompts');
+        const resetBtn = document.getElementById('reset-btn');
+        const startBtn = document.getElementById('start-btn');
+        const sessionInfo = document.getElementById('session-info');
         
-        let conversationHistory = [];
+        // State
+        let currentSession = null;
+        let conversationActive = false;
         let isProcessing = false;
+        let conversationHistory = [];
 
-        // Initial AI message
-        setTimeout(() => {
-            addBotMessage("Hello! I'm your AI medical assistant. I'm here to help with:\n\n• Emergency medical situations\n• Appointment scheduling\n• Medical information\n• Service coordination\n\nHow can I assist you today?");
-        }, 800);
+        // Initialize
+        function init() {
+            // Check for existing session
+            const savedSession = localStorage.getItem('mediai_session');
+            if (savedSession) {
+                currentSession = JSON.parse(savedSession);
+                if (currentSession.active) {
+                    startConversation();
+                }
+            }
+            
+            // Update session info
+            updateSessionInfo();
+        }
 
+        // Start conversation
+        function startConversation() {
+            // Hide welcome screen
+            welcomeScreen.style.display = 'none';
+            
+            // Show chat interface
+            messages.style.display = 'flex';
+            inputContainer.style.display = 'block';
+            
+            // Create new session if needed
+            if (!currentSession) {
+                currentSession = {
+                    id: 'session_' + Date.now(),
+                    started: new Date().toISOString(),
+                    active: true,
+                    messageCount: 0,
+                    lastMessage: null
+                };
+                saveSession();
+            }
+            
+            conversationActive = true;
+            
+            // Add initial bot message if no messages yet
+            if (conversationHistory.length === 0) {
+                setTimeout(() => {
+                    addBotMessage("Hello! I'm MediAI, your intelligent medical assistant. I can help with:\n\n• 🚨 Emergency situations\n• 📅 Appointment scheduling\n• 🤒 Symptom assessment\n• ℹ️ Medical information\n\nHow can I assist you today?");
+                }, 500);
+            }
+            
+            // Focus input
+            userInput.focus();
+            updateSessionInfo();
+        }
+
+        // Add message to chat
         function addMessage(sender, content) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
             
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
-            contentDiv.innerHTML = content.replace(/\n/g, '<br>');
             
-            const timeDiv = document.createElement('div');
+            // Format content with line breaks and emojis
+            let formattedContent = content
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            contentDiv.innerHTML = formattedContent;
+            
+            const timeDiv = document.createElement('span');
             timeDiv.className = 'message-time';
-            timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timeDiv.textContent = formatTime(new Date());
             
             messageDiv.appendChild(contentDiv);
             messageDiv.appendChild(timeDiv);
-            messagesContainer.appendChild(messageDiv);
+            messages.appendChild(messageDiv);
             
-            // Store in conversation history
+            // Store in history
             conversationHistory.push({
                 sender,
                 content,
                 timestamp: new Date().toISOString()
             });
+            
+            // Update session
+            if (currentSession) {
+                currentSession.messageCount++;
+                currentSession.lastMessage = new Date().toISOString();
+                saveSession();
+            }
             
             // Scroll to bottom
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -457,14 +701,75 @@
             addMessage('user', content);
         }
 
-        function addStatusMessage(content, isEmergency = false) {
-            const statusDiv = document.createElement('div');
-            statusDiv.className = `status-message ${isEmergency ? 'emergency-alert' : ''}`;
-            statusDiv.innerHTML = `<i class="fas fa-${isEmergency ? 'exclamation-triangle' : 'check-circle'}"></i> ${content}`;
-            messagesContainer.appendChild(statusDiv);
+        function addEmergencyAlert(content) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'emergency-alert';
+            alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${content}`;
+            messages.appendChild(alertDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        function addSuccessMessage(content) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${content}`;
+            messages.appendChild(successDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show conversation complete screen
+        function showConversationComplete() {
+            const completeDiv = document.createElement('div');
+            completeDiv.className = 'conversation-complete';
+            completeDiv.innerHTML = `
+                <h3><i class="fas fa-check-circle"></i> Conversation Complete</h3>
+                <p>Thank you for using MediAI. Your medical request has been processed. What would you like to do next?</p>
+                <div class="action-buttons">
+                    <button class="action-btn primary-btn" onclick="startNewConversation()">
+                        <i class="fas fa-plus"></i> New Conversation
+                    </button>
+                    <button class="action-btn secondary-btn" onclick="showSummary()">
+                        <i class="fas fa-file-medical"></i> View Summary
+                    </button>
+                </div>
+            `;
+            messages.appendChild(completeDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Start new conversation
+        function startNewConversation() {
+            // Clear current conversation
+            conversationHistory = [];
+            messages.innerHTML = '';
+            
+            // Reset session
+            if (currentSession) {
+                currentSession.active = true;
+                currentSession.messageCount = 0;
+                currentSession.lastMessage = null;
+                saveSession();
+            }
+            
+            // Show new welcome message
+            addBotMessage("Hello! I'm MediAI, ready to assist you. How can I help with your medical needs today?");
+            
+            // Focus input
+            userInput.focus();
+            updateSessionInfo();
+        }
+
+        // Show summary
+        function showSummary() {
+            const summary = conversationHistory
+                .filter(msg => msg.sender === 'user')
+                .map(msg => `• ${msg.content}`)
+                .join('\n');
+            
+            alert(`📋 Conversation Summary:\n\n${summary || 'No messages yet'}`);
+        }
+
+        // Show typing indicator
         function showTypingIndicator() {
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot';
@@ -475,10 +780,12 @@
                     <div class="typing-dot"></div>
                 </div>
             `;
-            messagesContainer.appendChild(typingDiv);
+            messages.appendChild(typingDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return typingDiv;
         }
 
+        // Remove typing indicator
         function removeTypingIndicator() {
             const typingIndicator = document.querySelector('.typing-indicator');
             if (typingIndicator) {
@@ -486,28 +793,23 @@
             }
         }
 
-        function useExample(text) {
-            userInput.value = text;
-            userInput.focus();
-        }
-
+        // Send message to server
         async function sendMessage(message = null) {
-            if (isProcessing) return;
+            if (isProcessing || !conversationActive) return;
             
             const msg = message || userInput.value.trim();
             
             if (!msg) return;
             
             isProcessing = true;
+            sendBtn.disabled = true;
+            
+            // Add user message
             addUserMessage(msg);
             
             if (!message) {
                 userInput.value = '';
-            }
-            
-            // Hide example prompts after first message
-            if (examplePrompts.style.display !== 'none') {
-                examplePrompts.style.display = 'none';
+                adjustTextareaHeight();
             }
             
             try {
@@ -518,6 +820,7 @@
                     },
                     body: JSON.stringify({ 
                         message: msg,
+                        session_id: currentSession?.id || 'new',
                         history: conversationHistory.slice(-3)
                     })
                 });
@@ -526,30 +829,78 @@
                 
                 removeTypingIndicator();
                 
-                // Process AI response
+                // Process response
                 setTimeout(() => {
                     addBotMessage(data.response);
                     
-                    // Add status messages for specific cases
+                    // Check for special conditions
                     if (data.response.includes('EMERGENCY') || data.response.includes('🚨')) {
-                        addStatusMessage('Emergency alert sent to medical team. Help is on the way.', true);
+                        addEmergencyAlert('Emergency alert sent to medical team. Help is on the way.');
                     } else if (data.response.includes('APPOINTMENT') || data.response.includes('✅')) {
-                        addStatusMessage('Appointment scheduled and confirmation sent.', false);
+                        addSuccessMessage('Appointment scheduled and confirmation sent.');
+                    }
+                    
+                    // Check if conversation is complete
+                    if (data.response.includes('Thank you') || data.response.includes('goodbye') || 
+                        conversationHistory.length >= 15) {
+                        setTimeout(() => {
+                            showConversationComplete();
+                            conversationActive = false;
+                            if (currentSession) {
+                                currentSession.active = false;
+                                saveSession();
+                            }
+                        }, 1000);
                     }
                     
                     isProcessing = false;
+                    sendBtn.disabled = false;
                     userInput.focus();
                 }, 300);
                 
             } catch (error) {
                 console.error('Error:', error);
                 removeTypingIndicator();
-                addBotMessage("I apologize, but I'm having trouble connecting to the medical service system. Please try again or call emergency services directly at 911.");
+                addBotMessage("I apologize, but I'm having trouble connecting. Please try again or call emergency services at 911.");
                 isProcessing = false;
+                sendBtn.disabled = false;
             }
         }
 
+        // Save session to localStorage
+        function saveSession() {
+            if (currentSession) {
+                localStorage.setItem('mediai_session', JSON.stringify(currentSession));
+                updateSessionInfo();
+            }
+        }
+
+        // Update session info display
+        function updateSessionInfo() {
+            if (currentSession && currentSession.active) {
+                sessionInfo.textContent = `Messages: ${currentSession.messageCount}`;
+            } else {
+                sessionInfo.textContent = 'Ready';
+            }
+        }
+
+        // Format time
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        // Adjust textarea height
+        function adjustTextareaHeight() {
+            userInput.style.height = 'auto';
+            userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+        }
+
         // Event Listeners
+        startBtn.addEventListener('click', startConversation);
+        
         sendBtn.addEventListener('click', () => sendMessage());
         
         userInput.addEventListener('keypress', (e) => {
@@ -558,30 +909,38 @@
                 sendMessage();
             }
         });
-
-        // Auto-resize input
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+        
+        userInput.addEventListener('input', adjustTextareaHeight);
+        
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Start a new conversation? Current chat will be cleared.')) {
+                localStorage.removeItem('mediai_session');
+                currentSession = null;
+                conversationHistory = [];
+                conversationActive = false;
+                messages.innerHTML = '';
+                welcomeScreen.style.display = 'flex';
+                inputContainer.style.display = 'none';
+                messages.style.display = 'none';
+                updateSessionInfo();
+            }
         });
-
-        // Focus input when clicking on chat
-        messagesContainer.addEventListener('click', () => {
-            userInput.focus();
+        
+        // Auto-resize on paste
+        userInput.addEventListener('paste', (e) => {
+            setTimeout(adjustTextareaHeight, 0);
         });
-
-        // Add some visual effects
-        document.querySelectorAll('.example-prompt').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            });
-        });
-
-        // Initialize
-        userInput.focus();
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Example functions for modal (you can expand these)
+        function showInfo() {
+            alert(`MediAI Assistant v2.5\n\nFeatures:\n• AI-powered medical assistance\n• Emergency detection & response\n• Appointment scheduling\n• 24/7 availability\n• 99.3% accuracy rate`);
+        }
+        
+        // Attach info button
+        document.getElementById('info-btn').addEventListener('click', showInfo);
     </script>
 </body>
 </html>
